@@ -1,0 +1,54 @@
+@Student_HostAddress = http://localhost:5007
+
+### ==========================================
+### 1. СТУДЕНТЫ (Students)
+### ==========================================
+
+### Получить список всех студентов
+GET {{Student_HostAddress}}/api/students
+Accept: application/json
+
+### ---
+
+### Создать нового студента (Alex Smith)
+POST {{Student_HostAddress}}/api/students
+Content-Type: application/json
+
+{
+  "firstName": "Alex",
+  "lastName": "Smith",
+  "email": "alex.smith@example.com",
+  "birthDate": "2002-05-15T00:00:00Z"
+}
+
+### ---
+
+### Получить студента по ID (предполагаем, что ID = 1)
+GET {{Student_HostAddress}}/api/students/1
+Accept: application/json
+
+### ---
+
+### Удалить студента по ID
+DELETE {{Student_HostAddress}}/api/students/1
+
+
+### ==========================================
+### 2. ПРЕПОДАВАТЕЛИ (Teachers)
+### ==========================================
+# (Аналогичные CRUD эндпоинты, если вы их создадите)
+
+
+### ==========================================
+### 3. КУРСЫ (Courses)
+### ==========================================
+# (Пример создания курса с привязкой к TeacherId = 1)
+# POST {{Student_HostAddress}}/api/courses
+# Content-Type: application/json
+# 
+# {
+#   "name": "Backend Development on .NET 8",
+#   "description": "Advanced ASP.NET Core Web API architecture",
+#   "credits": 5,
+#   "teacherId": 1
+# }
