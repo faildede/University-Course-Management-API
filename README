@@ -1,14 +1,12 @@
-#University Course Management API
+# University Course Management API
 
 Полноценный REST Web API на **ASP.NET Core (.NET 10)** для системы управления университетскими курсами. Проект реализует работу с реляционной базой данных через Entity Framework Core, разделение на слои с использованием паттерна Repository, маппинг данных через AutoMapper, единый формат ответа API, валидацию и централизованную обработку ошибок.
 
----
-
-##Архитектура проекта
+##  Архитектура проекта
 
 Архитектура приложения построена по классической многослойной схеме (N-Tier Architecture):
 
-```text
+```
 Client (Postman / Swagger / Web Frontend)
   ↓ HTTP
 Controllers (API Endpoints & Routing)
@@ -18,104 +16,145 @@ Repositories (Data Access Abstraction Layer)
 Entity Framework Core (ORM & LINQ)
   ↓
 Database (PostgreSQL via Docker)
+
 ```
 
-###Основная структура папок:
-- `Controllers/` — REST-контроллеры (`StudentsController`, `TeachersController`, `CoursesController`, `EnrollmentsController`).
-- `Models/` — Сущности базы данных (`Student`, `Teacher`, `Course`, `Enrollment`).
-- `DTOs/` — Модели передачи данных для разделения контракта API и сущностей БД.
-- `Data/` — Контекст базы данных (`ApplicationDbContext`) с настройками Fluent API.
-- `Repositories/` — Реализация паттерна Repository (`IRepository<T>`, `Repository<T>`).
-- `Mapping/` — Профили маппинга AutoMapper (`MappingProfile`).
-- `Middleware/` — Централизованная обработка исключений (`ExceptionHandlingMiddleware`).
-- `Common/` — Универсальная модель единого ответа API (`ReturnResult<T>`).
+### Основная структура папок
 
----
+* `Controllers/` — REST-контроллеры (`StudentsController`, `TeachersController`, `CoursesController`, `EnrollmentsController`).
 
-##Технологический стек
-- **Backend:** ASP.NET Core Web API, C#
-- **ORM:** Entity Framework Core (Code First, Fluent API)
-- **База данных:** PostgreSQL (в контейнере Docker)
-- **Маппинг:** AutoMapper
-- **Документация:** Swagger / OpenAPI
-- **Логирование:** Встроенный `ILogger`
+* `Models/` — Сущности базы данных (`Student`, `Teacher`, `Course`, `Enrollment`).
 
----
+* `DTOs/` — Модели передачи данных для разделения контракта API и сущностей БД.
 
-##Инструкция по запуску
+* `Data/` — Контекст базы данных (`ApplicationDbContext`) с настройками Fluent API.
 
-###Предварительные требования
+* `Repositories/` — Реализация паттерна Repository (`IRepository<T>`, `Repository<T>`).
+
+* `Mapping/` — Профили маппинга AutoMapper (`MappingProfile`).
+
+* `Middleware/` — Централизованная обработка исключений (`ExceptionHandlingMiddleware`).
+
+* `Common/` — Универсальная модель единого ответа API (`ReturnResult<T>`).
+
+## Технологический стек
+
+* **Backend:** ASP.NET Core Web API, C# (.NET 10)
+
+* **ORM:** Entity Framework Core (Code First, Fluent API)
+
+* **База данных:** PostgreSQL (в контейнере Docker)
+
+* **Маппинг:** AutoMapper
+
+* **Документация:** Swagger / OpenAPI
+
+* **Логирование:** Встроенный `ILogger`
+
+## Инструкция по запуску
+
+### Предварительные требования
+
 Убедитесь, что у вас установлены:
-- .NET 8 (или выше, например .NET 10 SDK)
-- Docker и Docker Compose
 
-###Шаг 1. Запуск базы данных
-В корне проекта (где лежит файл `docker-compose.yml`) запустите PostgreSQL в контейнере:
-```bash
-docker compose up -d
-```
+* .NET 8 (или выше / .NET 10 SDK)
 
-###Шаг 2. Применение миграций БД
-Создайте и примените миграции Entity Framework Core для создания таблиц в базе данных:
-```bash
-dotnet ef database update
-```
+* Docker и Docker Compose
 
-###Шаг 3. Запуск приложения
-Запустите Web API проект:
-```bash
-dotnet run
-```
+### Шаги для запуска
 
-После запуска приложение будет доступно по адресу: 
-**`http://localhost:5007`** (или `https://localhost:7001`)  
-Документация Swagger UI: **`http://localhost:5007/swagger`**
+1. **Запуск базы данных**
 
----
+   В корне проекта (где лежит файл `docker-compose.yml`) запустите PostgreSQL в контейнере:
 
-##Основные Endpoints API
+   ```
+   docker compose up -d
+   
+   ```
 
-###Студенты (`/api/students`)
-- `GET /api/students` — Получить список всех студентов.
-- `GET /api/students/{id}` — Получить информацию о конкретном студенте по ID.
-- `POST /api/students` — Создать нового студента.
-- `PUT /api/students/{id}` — Обновить данные студента.
-- `DELETE /api/students/{id}` — Удалить студента.
+2. **Применение миграций БД**
 
-###Преподаватели (`/api/teachers`)
-- `GET /api/teachers` — Получить список всех преподавателей.
-- `GET /api/teachers/{id}` — Получить преподавателя по ID.
-- `POST /api/teachers` — Зарегистрировать нового преподавателя.
-- `PUT /api/teachers/{id}` — Обновить информацию о преподавателе.
-- `DELETE /api/teachers/{id}` — Удалить преподавателя.
+   Примените миграции Entity Framework Core для создания таблиц в базе данных:
 
-###Курсы (`/api/courses`)
-- `GET /api/courses` — Получить список всех курсов (с поддержкой фильтрации).
-- `GET /api/courses/{id}` — Получить курс по ID.
-- `POST /api/courses` — Создать учебный курс и привязать к преподавателю (`TeacherId`).
-- `PUT /api/courses/{id}` — Обновить курс.
-- `DELETE /api/courses/{id}` — Удалить курс.
+   ```
+   dotnet ef database update
+   
+   ```
 
-###Записи на курсы (`/api/enrollments`)
-- `GET /api/enrollments` — Получить список всех записей студентов на курсы.
-- `POST /api/enrollments` — Записать студента на курс (с проверкой бизнес-правил уникальности и существования объектов).
-- `PUT /api/enrollments/{id}/grade` — Обновить оценку студента по курсу.
-- `DELETE /api/enrollments/{id}` — Отменить запись студента с курса.
+3. **Запуск приложения**
 
----
+   Запустите Web API проект:
 
-##Обработка ошибок и единый формат ответа
+   ```
+   dotnet run
+   
+   ```
+
+ **Адреса после запуска:**
+
+* **API Base URL:** `http://localhost:5007` (или `https://localhost:7001`)
+
+* **Swagger UI:** `http://localhost:5007/swagger`
+
+##  Основные Endpoints API
+
+###  Студенты (`/api/students`)
+
+| Метод | Эндпоинт | Описание | 
+| ----- | ----- | ----- | 
+| `GET` | `/api/students` | Получить список всех студентов | 
+| `GET` | `/api/students/{id}` | Получить информацию о студенте по ID | 
+| `POST` | `/api/students` | Создать нового студента | 
+| `PUT` | `/api/students/{id}` | Обновить данные студента | 
+| `DELETE` | `/api/students/{id}` | Удалить студента | 
+
+###  Преподаватели (`/api/teachers`)
+
+| Метод | Эндпоинт | Описание | 
+| ----- | ----- | ----- | 
+| `GET` | `/api/teachers` | Получить список всех преподавателей | 
+| `GET` | `/api/teachers/{id}` | Получить преподавателя по ID | 
+| `POST` | `/api/teachers` | Зарегистрировать нового преподавателя | 
+| `PUT` | `/api/teachers/{id}` | Обновить информацию о преподавателе | 
+| `DELETE` | `/api/teachers/{id}` | Удалить преподавателя | 
+
+###  Курсы (`/api/courses`)
+
+| Метод | Эндпоинт | Описание | 
+| ----- | ----- | ----- | 
+| `GET` | `/api/courses` | Получить список всех курсов (с поддержкой фильтрации) | 
+| `GET` | `/api/courses/{id}` | Получить курс по ID | 
+| `POST` | `/api/courses` | Создать учебный курс и привязать к преподавателю (`TeacherId`) | 
+| `PUT` | `/api/courses/{id}` | Обновить курс | 
+| `DELETE` | `/api/courses/{id}` | Удалить курс | 
+
+### Записи на курсы (`/api/enrollments`)
+
+| Метод | Эндпоинт | Описание | 
+| ----- | ----- | ----- | 
+| `GET` | `/api/enrollments` | Получить список всех записей студентов на курсы | 
+| `POST` | `/api/enrollments` | Записать студента на курс (с проверкой бизнес-правил) | 
+| `PUT` | `/api/enrollments/{id}/grade` | Обновить оценку студента по курсу | 
+| `DELETE` | `/api/enrollments/{id}` | Отменить запись студента с курса | 
+
+## Обработка ошибок и единый формат ответа
+
 Все ответы API (как успешные, так и ошибочные) возвращаются в стандартизированном формате `ReturnResult<T>`:
-```json
+
+```
 {
   "statusCode": 200,
   "isSuccess": true,
-  "result": { ... },
+  "result": {
+    "id": 1,
+    "firstName": "Alex",
+    "lastName": "Smith"
+  },
   "errorCode": null,
   "errorMessage": null,
   "traceId": "0HMN..."
 }
-```
-Непредвиденные ошибки перехватываются глобальным `ExceptionHandlingMiddleware`, логируются через `ILogger` с уровнем `Error` и возвращают клиенту безопасный ответ со статусом `500 Internal Server Error` без раскрытия стека вызовов (`StackTrace`).
+
 ```
 
+Непредвиденные ошибки перехватываются глобальным `ExceptionHandlingMiddleware`, логируются через `ILogger` с уровнем `Error` и возвращают клиенту безопасный ответ со статусом `500 Internal Server Error` без раскрытия стека вызовов (`StackTrace`).
